@@ -31,20 +31,49 @@ bool is_pallindrome(size_t input)
          input /= 10;
          check.push_back(digit);
     }
-    return false;
+    check.resize(len);
+    /*
+     * If len is odd, don't care about len/2 element, must check elements 0 to
+     * n/2 -1 is equal to reverse of n/2 + 1 to n.
+     * If len is even, do care. Must have elements 0 to n/2 equal to reverse of
+     * n/2 to n.
+     */
+    vector<size_t>::iterator first = check.begin() + len/2;
+    vector<size_t>::iterator last = check.end();
+    vector<size_t>::reverse_iterator first2 = check.rbegin() + len/2;
+    for(; first != last; ++first, ++first2){
+       if(*first != *first2) {
+           return false;
+       }
+       
+     }
+
+    return true;
 }
 
+int palindromify(size_t x)
+{
+    bool result;
+	result = is_pallindrome(x);
+	if(result == true) {
+       return x; 
+	}
+	while(result != true) {
+		x += reverse_digits(x);
+		result = is_pallindrome(x);
+		if(x >= 500000000) {
+			return -1;
+		}
+	}
+	return x;
+
+}
 int main() {
     
-    size_t x = 89;
-    size_t reversed = reverse_digits(x);
-    size_t pal = x + reversed;
-    cout << pal << endl;
-    /*try{*/
-        //vec.at(1000) = 0;
-    //}
-    //catch(std::out_of_range o){
-        //std::cout<<o.what()<<std::endl;
-    /*}*/
+    size_t x = 196;
+	int pal = palindromify(x);
+
+	cout << "x = " << x << " pal = " << pal << endl;
+
     return 0;
 }
