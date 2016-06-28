@@ -5,11 +5,6 @@
 
 using namespace std;
 
-class ABBA {
-    public:
-        int *string_to_int(string);
-};
-
 int get_index(const char *array, size_t size, char c)
  {
       const char* end = array + size;
