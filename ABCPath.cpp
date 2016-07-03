@@ -63,9 +63,10 @@ vector<int> find_As(vector<string> grid)
 int ABCPath::length(vector<string> grid)
 {
     vector<int> As = find_As(grid);
-    int len = 0;
+    int len;
     for(int i = 0; i < As.size(); i++) {
 
+        len = 0;
         int column = As.at(i);
         if(column == -1)
             return 0;
