@@ -53,10 +53,13 @@ vector<Node> find_As(vector<string> grid)
 {
     vector<Node> As;
     int count = 0;
-    for(size_t i = 0; i < grid.size(); i++) {
-        string focus_row = grid.at(i);
-        for(size_t j = 0; j < focus_row.length(); j++) {
-            if (focus_row.at(i) == 'A') {
+    int i = 0;
+    for(string focus_row : grid) {
+        i++;
+        int j = 0;
+        for(char c : focus_row) {
+            j++;
+            if (c == 'A') {
                 Node target_n;
                 target_n.value = 'A';
                 target_n.row_index = i;
@@ -72,6 +75,15 @@ vector<Node> find_As(vector<string> grid)
 int ABCPath2::length(vector<string> grid)
 {
     vector<Node> As = find_As(grid);
+    cout << " found As --- " << endl;
+    for(Node A : As)
+    {
+        cout << A.value << endl;
+
+        cout << A.row_index << endl;
+        cout << A.column_index << endl;
+    }
+    cout << " end As ---- " << endl;
     if(As.size() == 0)
         return 0;
     int len;
@@ -100,7 +112,10 @@ int ABCPath2::length(vector<string> grid)
 int main()
 {
     ABCPath2 a;
-    const char *test[] = { "ABE", "CFG", "BDH", "ABC" };
+    const char *test[] = { "ABE", 
+                           "CFG", 
+                           "BDH", 
+                           "ABC" };
                            /*<]{ "KCBVNRXSPVEGUEUFCODMOAXZYWEEWNYAAXRBKGACSLKYRVRKIO",*/
                            //"DIMCZDMFLAKUUEPMPGRKXSUUDFYETKYQGQHNFFEXFPXNYEFYEX",
                            //"DMFRPZCBOWGGHYAPRMXKZPYCSLMWVGMINAVRYUHJKBBRONQEXX",
