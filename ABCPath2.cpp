@@ -3,15 +3,9 @@
 #include <stdexcept>
 #include <vector>
 #include <queue>
-//#include <math.h>
-//#include <stdlib.h>
 using namespace std;
 
-//template<typename T, size_t N>
-//T * end(T (&ra)[N]) {
-//    return ra + N;
-//}
-class ABCPath2 {
+class ABCPath {
     public:
         int length(vector<string>);
 };
@@ -42,7 +36,6 @@ void que_neighbours(Node center, vector<string> grid)
                 target_n.row_index = row + i;
                 target_n.column_index = column + j;
                 q.push(target_n);
-                cout << " target is " << target << endl;
             }
         }
     }
@@ -55,10 +48,8 @@ vector<Node> find_As(vector<string> grid)
     int count = 0;
     int i = 0;
     for(string focus_row : grid) {
-        i++;
         int j = 0;
         for(char c : focus_row) {
-            j++;
             if (c == 'A') {
                 Node target_n;
                 target_n.value = 'A';
@@ -67,33 +58,26 @@ vector<Node> find_As(vector<string> grid)
                 As.push_back(target_n);
                 count++;
             }
+            j++;
         }
+        i++;
     }
     As.resize(count);
     return As;
 }
-int ABCPath2::length(vector<string> grid)
+int ABCPath::length(vector<string> grid)
 {
     vector<Node> As = find_As(grid);
-    cout << " found As --- " << endl;
-    for(Node A : As)
-    {
-        cout << A.value << endl;
-
-        cout << A.row_index << endl;
-        cout << A.column_index << endl;
-    }
-    cout << " end As ---- " << endl;
     if(As.size() == 0)
         return 0;
     int len;
+    int len_max = 0;
     for(size_t i = 0; i < As.size(); i++) {
 
-        len = 0;
+        len = 1;
         Node A = As.at(i);
         que_neighbours(A , grid);
         char focus = A.value;
-        printf("\nFocus(%d,%d) ", A.row_index, A.column_index);
         while(!q.empty()) {
             Node dequeued = q.front();
             char deq_char = dequeued.value;
@@ -105,39 +89,38 @@ int ABCPath2::length(vector<string> grid)
                 que_neighbours(dequeued, grid);
             }
         }
+        if(len > len_max) {
+            len_max = len;
+        }
     }
-    return len;
+    return len_max;
 }
 
 int main()
 {
-    ABCPath2 a;
-    const char *test[] = { "ABE", 
-                           "CFG", 
-                           "BDH", 
-                           "ABC" };
-                           /*<]{ "KCBVNRXSPVEGUEUFCODMOAXZYWEEWNYAAXRBKGACSLKYRVRKIO",*/
-                           //"DIMCZDMFLAKUUEPMPGRKXSUUDFYETKYQGQHNFFEXFPXNYEFYEX",
-                           //"DMFRPZCBOWGGHYAPRMXKZPYCSLMWVGMINAVRYUHJKBBRONQEXX",
-                           //"ORGCBHXWMTIKYNLFHYBVHLZFYRPOLLAMBOPMNODWZUBLSQSDZQ",
-                           //"QQXUAIPSCEXZTTINEOFTJDAOBVLXZJLYOQREADUWWSRSSJXDBV",
-                           //"PEDHBZOVMFQQDUCOWVXZELSEBAMBRIKBTJSVMLCAABHAQGBWRP",
-                           //"FUSMGCSCDLYQNIXTSTPJGZKDIAZGHXIOVGAZHYTMIWAIKPMHTJ",
-                           //"QMUEDLXSREWNSMEWWRAUBFANSTOOJGFECBIROYCQTVEYGWPMTU",
-                           //"FFATSKGRQJRIQXGAPLTSXELIHXOPUXIDWZHWNYUMXQEOJIAJDH",
-                           //"LPUTCFHYQIWIYCVOEYHGQGAYRBTRZINKBOJULGYCULRMEOAOFP",
-                           //"YOBMTVIKVJOSGRLKTBHEJPKVYNLJQEWNWARPRMZLDPTAVFIDTE",
-                           //"OOBFZFOXIOZFWNIMLKOTFHGKQAXFCRZHPMPKGZIDFNBGMEAXIJ",
-                           //"VQQFYCNJDQGJPYBVGESDIAJOBOLFPAOVXKPOVODGPFIYGEWITS",
-                           //"AGVBSRLBUYOULWGFOFFYAAONJTLUWRGTYWDIXDXTMDTUYESDPK",
-                           //"AAJOYGCBYTMXQSYSPTBWCSVUMNPRGPOEAVVBGMNHBXCVIQQINJ",
-                           //"SPEDOAHYIDYUJXGLWGVEBGQSNKCURWYDPNXBZCDKVNRVEMRRXC",
-                           //"DVESXKXPJBPSJFSZTGTWGAGCXINUXTICUCWLIBCVYDYUPBUKTS",
-                           //"LPOWAPFNDRJLBUZTHYVFHVUIPOMMPUZFYTVUVDQREFKVWBPQFS",
-                           //"QEASCLDOHJFTWMUODRKVCOTMUJUNNUYXZEPRHYOPUIKNGXYGBF",
-                           /*"XQUPBSNYOXBPTLOYUJIHFUICVQNAWFMZAQZLTXKBPIAKXGBHXX" };*/
+    ABCPath a;
+    const char *test[] = { "KCBVNRXSPVEGUEUFCODMOAXZYWEEWNYAAXRBKGACSLKYRVRKIO",
+                           "DIMCZDMFLAKUUEPMPGRKXSUUDFYETKYQGQHNFFEXFPXNYEFYEX",
+                           "DMFRPZCBOWGGHYAPRMXKZPYCSLMWVGMINAVRYUHJKBBRONQEXX",
+                           "ORGCBHXWMTIKYNLFHYBVHLZFYRPOLLAMBOPMNODWZUBLSQSDZQ",
+                           "QQXUAIPSCEXZTTINEOFTJDAOBVLXZJLYOQREADUWWSRSSJXDBV",
+                           "PEDHBZOVMFQQDUCOWVXZELSEBAMBRIKBTJSVMLCAABHAQGBWRP",
+                           "FUSMGCSCDLYQNIXTSTPJGZKDIAZGHXIOVGAZHYTMIWAIKPMHTJ",
+                           "QMUEDLXSREWNSMEWWRAUBFANSTOOJGFECBIROYCQTVEYGWPMTU",
+                           "FFATSKGRQJRIQXGAPLTSXELIHXOPUXIDWZHWNYUMXQEOJIAJDH",
+                           "LPUTCFHYQIWIYCVOEYHGQGAYRBTRZINKBOJULGYCULRMEOAOFP",
+                           "YOBMTVIKVJOSGRLKTBHEJPKVYNLJQEWNWARPRMZLDPTAVFIDTE",
+                           "OOBFZFOXIOZFWNIMLKOTFHGKQAXFCRZHPMPKGZIDFNBGMEAXIJ",
+                           "VQQFYCNJDQGJPYBVGESDIAJOBOLFPAOVXKPOVODGPFIYGEWITS",
+                           "AGVBSRLBUYOULWGFOFFYAAONJTLUWRGTYWDIXDXTMDTUYESDPK",
+                           "AAJOYGCBYTMXQSYSPTBWCSVUMNPRGPOEAVVBGMNHBXCVIQQINJ",
+                           "SPEDOAHYIDYUJXGLWGVEBGQSNKCURWYDPNXBZCDKVNRVEMRRXC",
+                           "DVESXKXPJBPSJFSZTGTWGAGCXINUXTICUCWLIBCVYDYUPBUKTS",
+                           "LPOWAPFNDRJLBUZTHYVFHVUIPOMMPUZFYTVUVDQREFKVWBPQFS",
+                           "QEASCLDOHJFTWMUODRKVCOTMUJUNNUYXZEPRHYOPUIKNGXYGBF",
+                           "XQUPBSNYOXBPTLOYUJIHFUICVQNAWFMZAQZLTXKBPIAKXGBHXX" };
     vector<string> v1(test, end(test));
     int len = a.length(v1);
     cout << len << endl;
-        return 0;
+    return 0;
 }
