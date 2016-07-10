@@ -8,10 +8,12 @@ using namespace std;
 class TallPeople {
     public:
         vector<int> getPeople(vector<string>);
+        vector<int> parse_string(string);
+        vector<vector <int>> parse_string_vector(vector<string>);
 
 };
 
-vector<int> split(string in)
+vector<int> TallPeople::parse_string(string in)
 {
     int temp;
     vector<int> cds;
@@ -22,23 +24,31 @@ vector<int> split(string in)
     return cds;
 }
 
-vector<int> TallPeople::getPeople(vector<string> people)
+vector<vector <int>> TallPeople::parse_string_vector(vector<string> people)
 {
     int rows = people.size();
-    int columns;
-    vector<int> row_int;
-    vector<int> row_mins;
-    vector<int> column_max;
     vector<vector <int>> matrix;
     for(string row_str : people) {
-        row_int = split(row_str);
-        columns = row_int.size();
+        vector<int> row_int = parse_string(row_str);
         matrix.push_back(row_int);
-        int min  = *min_element(row_int.begin(), row_int.end());
-        row_mins.push_back(min);
         
     }
     matrix.resize(rows);
+
+    return matrix;
+}
+vector<int> TallPeople::getPeople(vector<string> people)
+{
+    vector<vector <int>> matrix = parse_string_vector(people);
+    vector<int> row_mins;
+    vector<int> column_max;
+    for(vector<int> row : matrix) {
+        int min  = *min_element(row.begin(), row.end());
+        row_mins.push_back(min);
+        
+    }
+    int columns = matrix.at(0).size();
+    int rows = matrix.size();
     for(int i = 0; i < columns; i++) {
         vector<int> column_int;
         for(int j =0 ; j < rows; j++) {
@@ -55,8 +65,8 @@ vector<int> TallPeople::getPeople(vector<string> people)
     int max = *max_element(row_mins.begin(), row_mins.end());
         
     vector<int> ret;
-    ret.push_back(min);
     ret.push_back(max);
+    ret.push_back(min);
     return ret;
 }
 int main()
