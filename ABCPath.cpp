@@ -76,14 +76,17 @@ int ABCPath::length(vector<string> grid)
 
         len = 1;
         Node A = As.at(i);
+        cout << " \n " << " i = " << A.row_index << " j = " << A.column_index <<  "\n" << endl;
         que_neighbours(A , grid);
         char focus = A.value;
         while(!q.empty()) {
             Node dequeued = q.front();
             char deq_char = dequeued.value;
+            cout << "focus = " << focus << endl;
             q.pop();
             if((deq_char - focus) == 1) {
                 len++;
+            cout << "deq = " << deq_char << dequeued.row_index << " " << dequeued.column_index << endl;
                 focus = deq_char;
                 q = {};
                 que_neighbours(dequeued, grid);
@@ -99,26 +102,19 @@ int ABCPath::length(vector<string> grid)
 int main()
 {
     ABCPath a;
-    const char *test[] = { "KCBVNRXSPVEGUEUFCODMOAXZYWEEWNYAAXRBKGACSLKYRVRKIO",
-                           "DIMCZDMFLAKUUEPMPGRKXSUUDFYETKYQGQHNFFEXFPXNYEFYEX",
-                           "DMFRPZCBOWGGHYAPRMXKZPYCSLMWVGMINAVRYUHJKBBRONQEXX",
-                           "ORGCBHXWMTIKYNLFHYBVHLZFYRPOLLAMBOPMNODWZUBLSQSDZQ",
-                           "QQXUAIPSCEXZTTINEOFTJDAOBVLXZJLYOQREADUWWSRSSJXDBV",
-                           "PEDHBZOVMFQQDUCOWVXZELSEBAMBRIKBTJSVMLCAABHAQGBWRP",
-                           "FUSMGCSCDLYQNIXTSTPJGZKDIAZGHXIOVGAZHYTMIWAIKPMHTJ",
-                           "QMUEDLXSREWNSMEWWRAUBFANSTOOJGFECBIROYCQTVEYGWPMTU",
-                           "FFATSKGRQJRIQXGAPLTSXELIHXOPUXIDWZHWNYUMXQEOJIAJDH",
-                           "LPUTCFHYQIWIYCVOEYHGQGAYRBTRZINKBOJULGYCULRMEOAOFP",
-                           "YOBMTVIKVJOSGRLKTBHEJPKVYNLJQEWNWARPRMZLDPTAVFIDTE",
-                           "OOBFZFOXIOZFWNIMLKOTFHGKQAXFCRZHPMPKGZIDFNBGMEAXIJ",
-                           "VQQFYCNJDQGJPYBVGESDIAJOBOLFPAOVXKPOVODGPFIYGEWITS",
-                           "AGVBSRLBUYOULWGFOFFYAAONJTLUWRGTYWDIXDXTMDTUYESDPK",
-                           "AAJOYGCBYTMXQSYSPTBWCSVUMNPRGPOEAVVBGMNHBXCVIQQINJ",
-                           "SPEDOAHYIDYUJXGLWGVEBGQSNKCURWYDPNXBZCDKVNRVEMRRXC",
-                           "DVESXKXPJBPSJFSZTGTWGAGCXINUXTICUCWLIBCVYDYUPBUKTS",
-                           "LPOWAPFNDRJLBUZTHYVFHVUIPOMMPUZFYTVUVDQREFKVWBPQFS",
-                           "QEASCLDOHJFTWMUODRKVCOTMUJUNNUYXZEPRHYOPUIKNGXYGBF",
-                           "XQUPBSNYOXBPTLOYUJIHFUICVQNAWFMZAQZLTXKBPIAKXGBHXX" };
+    const char *test[] =  {"ABCDEFGHIJKLMNOPQRSTUVWXA",
+                           "ABCDEFGHIJKLMNOPQRSTUVWXA",
+                           "ABCDEFGHIJKLMNOPQRSTUVWXA",
+                           "ABCDEFGHIJKLMNOPQRSTUVWXA",
+                           "ABCDEFGHIJKLMNOPQRSTUVWXA",
+                           "ABCDEFGHIJKLMNOPQRSTUVWXA",
+                           "ABCDEFGHIJKLMNOPQRSTUVWXY",
+                           "ABCDEFGHIJKLMNOPQRSTUVWXA",
+                           "ABCDEFGHIJKLMNOPQRSTUVWXA",
+                           "ABCDEFGHIJKLMNOPQRSTUVWXA",
+                           "ABCDEFGHIJKLMNOPQRSTUVWXA",
+                           "ABCDEFGHIJKLMNOPQRSTUVWXA"};
+
     vector<string> v1(test, end(test));
     int len = a.length(v1);
     cout << len << endl;
