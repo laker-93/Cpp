@@ -11,17 +11,21 @@ class ABCPath {
 };
 
 typedef struct node {
+        int len = 0;
+        bool visited = false;
         char value;
         int row_index;
         int column_index;
 }Node;
 
 queue<Node> q;
+queue<Node> q2;
 
-void que_neighbours(Node center, vector<string> grid)
+vector<Node> adj_neighbours(Node center, vector<string> grid)
 {
     int row = center.row_index;
     int column = center.column_index;
+    vector<Node> nghbrs;
     for(int i = -1; i < 2; i++) {
         for(int j = -1; j < 2; j++) {
             char target = 0;
@@ -35,11 +39,11 @@ void que_neighbours(Node center, vector<string> grid)
                 target_n.value = target;
                 target_n.row_index = row + i;
                 target_n.column_index = column + j;
-                q.push(target_n);
+                nghbrs.push_back(target_n);
             }
         }
     }
-    return;
+    return nghbrs;
 }
 
 vector<Node> find_As(vector<string> grid)
@@ -70,27 +74,26 @@ int ABCPath::length(vector<string> grid)
     vector<Node> As = find_As(grid);
     if(As.size() == 0)
         return 0;
-    int len;
     int len_max = 0;
     for(size_t i = 0; i < As.size(); i++) {
 
-        len = 1;
-        Node A = As.at(i);
-        que_neighbours(A , grid);
-        char focus = A.value;
+        Node focus = As.at(i);
+        focus.len = 1;
+        q.push(focus);
         while(!q.empty()) {
             Node dequeued = q.front();
-            char deq_char = dequeued.value;
-            q.pop();
-            if((deq_char - focus) == 1) {
-                len++;
-                focus = deq_char;
-                q = {};
-                que_neighbours(dequeued, grid);
+            cout << dequeued.value << endl;
+            vector<Node> nghbrs =  adj_neighbours(dequeued , grid);
+            for(Node n : nghbrs) {
+                if((n.value - dequeued.value) == 1) {
+                                q.push(n);
+                                int len = focus.len;
+                                len ++;
+                                n.len = len;
+                                if(len > len_max) {len_max = len;}
+                }
             }
-        }
-        if(len > len_max) {
-            len_max = len;
+            q.pop();
         }
     }
     return len_max;
@@ -99,26 +102,19 @@ int ABCPath::length(vector<string> grid)
 int main()
 {
     ABCPath a;
-    const char *test[] = { "KCBVNRXSPVEGUEUFCODMOAXZYWEEWNYAAXRBKGACSLKYRVRKIO",
-                           "DIMCZDMFLAKUUEPMPGRKXSUUDFYETKYQGQHNFFEXFPXNYEFYEX",
-                           "DMFRPZCBOWGGHYAPRMXKZPYCSLMWVGMINAVRYUHJKBBRONQEXX",
-                           "ORGCBHXWMTIKYNLFHYBVHLZFYRPOLLAMBOPMNODWZUBLSQSDZQ",
-                           "QQXUAIPSCEXZTTINEOFTJDAOBVLXZJLYOQREADUWWSRSSJXDBV",
-                           "PEDHBZOVMFQQDUCOWVXZELSEBAMBRIKBTJSVMLCAABHAQGBWRP",
-                           "FUSMGCSCDLYQNIXTSTPJGZKDIAZGHXIOVGAZHYTMIWAIKPMHTJ",
-                           "QMUEDLXSREWNSMEWWRAUBFANSTOOJGFECBIROYCQTVEYGWPMTU",
-                           "FFATSKGRQJRIQXGAPLTSXELIHXOPUXIDWZHWNYUMXQEOJIAJDH",
-                           "LPUTCFHYQIWIYCVOEYHGQGAYRBTRZINKBOJULGYCULRMEOAOFP",
-                           "YOBMTVIKVJOSGRLKTBHEJPKVYNLJQEWNWARPRMZLDPTAVFIDTE",
-                           "OOBFZFOXIOZFWNIMLKOTFHGKQAXFCRZHPMPKGZIDFNBGMEAXIJ",
-                           "VQQFYCNJDQGJPYBVGESDIAJOBOLFPAOVXKPOVODGPFIYGEWITS",
-                           "AGVBSRLBUYOULWGFOFFYAAONJTLUWRGTYWDIXDXTMDTUYESDPK",
-                           "AAJOYGCBYTMXQSYSPTBWCSVUMNPRGPOEAVVBGMNHBXCVIQQINJ",
-                           "SPEDOAHYIDYUJXGLWGVEBGQSNKCURWYDPNXBZCDKVNRVEMRRXC",
-                           "DVESXKXPJBPSJFSZTGTWGAGCXINUXTICUCWLIBCVYDYUPBUKTS",
-                           "LPOWAPFNDRJLBUZTHYVFHVUIPOMMPUZFYTVUVDQREFKVWBPQFS",
-                           "QEASCLDOHJFTWMUODRKVCOTMUJUNNUYXZEPRHYOPUIKNGXYGBF",
-                           "XQUPBSNYOXBPTLOYUJIHFUICVQNAWFMZAQZLTXKBPIAKXGBHXX" };
+    const char *test[] =  {"ABCDEFGHIJKLMNOPQRSTUVWXA",
+                           "ABCDEFGHIJKLMNOPQRSTUVWXA",
+                           "ABCDEFGHIJKLMNOPQRSTUVWXA",
+                           "ABCDEFGHIJKLMNOPQRSTUVWXA",
+                           "ABCDEFGHIJKLMNOPQRSTUVWXA",
+                           "ABCDEFGHIJKLMNOPQRSTUVWXA",
+                           "ABCDEFGHIJKLMNOPQRSTUVWXY",
+                           "ABCDEFGHIJKLMNOPQRSTUVWXA",
+                           "ABCDEFGHIJKLMNOPQRSTUVWXA",
+                           "ABCDEFGHIJKLMNOPQRSTUVWXA",
+                           "ABCDEFGHIJKLMNOPQRSTUVWXA",
+                           "ABCDEFGHIJKLMNOPQRSTUVWXA"};
+
     vector<string> v1(test, end(test));
     int len = a.length(v1);
     cout << len << endl;
