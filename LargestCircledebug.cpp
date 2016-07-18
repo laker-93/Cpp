@@ -28,23 +28,26 @@ bool pass_through(node centre, int radius, node point)
 {
     int a = centre.x;
     int b = centre.y;
-    int x = point.x;
-    int y = point.y;
-    if(x > a) {++x;}
-    if(y < b) {--y;}
-    int r_1 = (pow(((x - 1) - a), 2)) + (pow(((y - 1) - b), 2));
-    int r_2 = (pow((x - a), 2)) + (pow((y - b), 2));
-    int r_3 = (pow(((x - 1) - a), 2)) + (pow((y - b), 2));
+    int x_a = point.x;
+    int y_a = point.y;
+    int x_b = point.x + 1;
+    int y_b = point.y;
+    int x_c = point.x + 1;
+    int y_c = point.y - 1;
+    int x_d = point.x;
+    int y_d = point.y - 1;
     int radius_sq = pow(radius, 2);
-    if(centre.x = 8 && centre.y == 3) {
-        cout << "R_1 " << r_1 << " R_2 " << r_2 << endl;
-        cout << " radius_sq = " << radius_sq << endl;
-    }
-    if(radius_sq > r_1 && radius_sq <= r_2 || radius_sq == r_3) {
-        return true;
-    } else {
+    int norm_a = pow(x_a - a, 2) + pow(y_a - b, 2) - radius_sq;
+    int norm_b = pow(x_b - a, 2) + pow(y_b - b, 2) - radius_sq;
+    int norm_c = pow(x_c - a, 2) + pow(y_c - b, 2) - radius_sq;
+    int norm_d = pow(x_d - a, 2) + pow(y_d - b, 2) - radius_sq;
+    if(norm_a >= 0 && norm_b >= 0 && norm_c >= 0 && norm_d >= 0) {
         return false;
     }
+    if(norm_a <= 0 && norm_b <= 0 && norm_c <= 0 && norm_d <= 0) {
+        return false;
+    }
+    return true;
 }
 
 bool check_free(node focus, vector<string> grid)
@@ -68,16 +71,13 @@ vector<node> quadrant_1(vector<string> grid, node centre, int radius)
     int a = centre.x;
     int b = centre.y;
     node focus(a + radius - 1, b + 1);
-    cout << " radius " << radius << endl;
+    cout << " first focus = " << focus.x << " " << focus.y << endl;
     if(!check_free(focus, grid)) {
-        cout << " Nein " << endl;
         res.clear();
         return res;
+        cout << " exit first " << endl;
     } else {
-        if(centre.x == 8) {
-        cout << "left most x = " << a + radius - 1 << " valid" << endl;
         res.push_back(focus);
-        }
     }
 
     //need to iterate through one quarter of the circle's circumference so
@@ -97,6 +97,7 @@ vector<node> quadrant_1(vector<string> grid, node centre, int radius)
                 cout << " added " << up.x << " " << up.y << endl;
                 continue;
             } else {
+                cout << " up not free exit " << endl;
                 res.clear();
                 return res;
             }
@@ -112,6 +113,7 @@ vector<node> quadrant_1(vector<string> grid, node centre, int radius)
                 cout << " added " << diag.x << " " << diag.y << endl;
                 continue;
             } else {
+                cout << " diag not free exit " << endl;
                 res.clear();
                 return res;
             }
@@ -126,6 +128,7 @@ vector<node> quadrant_1(vector<string> grid, node centre, int radius)
                 cout << " added " << left.x << " " << left.y << endl;
                 continue;
             } else {
+                cout << " left not free exit " << endl;
                 res.clear();
                 return res;
             }
@@ -178,8 +181,8 @@ int LargestCircle::radius(vector<string> grid)
     for(int r = 0; r <= grid.size() - 1; r++) {
         for(int c = 0; c <= grid.at(0).size() - 1; c++) {
             node centre(c,r);
-            cout << " CENTRE " << c << " " << r << endl;
             for(int radius = grid.size()/2; radius >= 1; radius --) {
+                cout << " CENTRE " << c << " " << r << " RADIUS " << radius << endl;
                 vector<node> q1 = quadrant_1(grid, centre, radius);
                 if(q1.size() != 0) {
                     bool comp = complete_quads(q1, centre, radius, grid);
@@ -195,6 +198,7 @@ int LargestCircle::radius(vector<string> grid)
             }
         }
     }
+        cout << grid.size() << " SIZE  " << grid.at(0).size() << endl;
     return max;
 }
 int main()
