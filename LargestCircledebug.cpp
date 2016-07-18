@@ -87,7 +87,7 @@ vector<node> quadrant_1(vector<string> grid, node centre, int radius)
         "centre = " << centre.x << " " << centre.y  << endl;
         cout<<
         "r =  " << radius << endl;
-    if(focus.y + 1 < grid.size() - 1) {
+    if(focus.y + 1 <= grid.size() - 1) {
         node up(focus.x, focus.y + 1);
         cout << "up = " << up.x << " " << up.y << endl;
         if (pass_through(centre, radius, up)) {
@@ -103,7 +103,7 @@ vector<node> quadrant_1(vector<string> grid, node centre, int radius)
             }
         } 
     }
-        if(focus.y + 1 < grid.size() - 1) {
+        if(focus.y + 1 <= grid.size() - 1) {
         node diag(focus.x -1, focus.y + 1);
             cout << "diag = " << focus.x - 1 << " " << focus.y + 1 << endl;
         if (pass_through(centre, radius, diag)) {
