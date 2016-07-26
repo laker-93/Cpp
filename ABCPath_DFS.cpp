@@ -11,8 +11,6 @@ class ABCPath {
 };
 
 typedef struct node {
-        int len = 0;
-        bool visited = false;
         char value;
         int row_index;
         int column_index;
@@ -70,6 +68,19 @@ vector<Node> find_As(vector<string> grid)
 }
 int ABCPath::length(vector<string> grid)
 {
+    int m = grid.size();
+    int n = grid.at(0).size();
+    bool **visits = new bool*[m];
+    for(int i = 0; i < m; i++) {
+        visits[i] = new bool[n];
+    }
+
+    for(int i = 0; i < m; i++) {
+        for(int j = 0; j < n; j++) {
+            visits[i][j] = false;
+        }
+    }
+
     vector<Node> As = find_As(grid);
     if(As.size() == 0)
         return 0;
@@ -77,23 +88,26 @@ int ABCPath::length(vector<string> grid)
     for(size_t i = 0; i < As.size(); i++) {
 
         Node focus = As.at(i);
-        focus.len = 1;
+        int len = 0;
         s.push(focus);
+        len++;
         while(!s.empty()) {
             Node dequeued = s.top();
-//            cout << dequeued.value << endl;
             vector<Node> nghbrs =  adj_neighbours(dequeued , grid);
             for(Node n : nghbrs) {
-                n.visited = true;
-                if((n.value - dequeued.value) == 1 && (dequeued.visited == false)) {
+                if((n.value - dequeued.value) == 1) {
+                    if(visits[n.row_index][n.column_index] == false) {
+                           visits[n.row_index][n.column_index] = true;
                                 s.push(n);
-                                int len = focus.len;
-                                len ++;
-                                n.len = len;
-                                if(len > len_max) {len_max = len;}
+                                goto end;
+
+                    }
                 }
             }
+            if((int) s.size() > len_max) {len_max = s.size();}
             s.pop();
+end:
+            ;
         }
     }
     return len_max;
@@ -102,18 +116,23 @@ int ABCPath::length(vector<string> grid)
 int main()
 {
     ABCPath a;
-    const char *test[] =  {"ABCDEFGHIJKLMNOPQRSTUVWXA",
-                           "ABCDEFGHIJKLMNOPQRSTUVWXA",
-                           "ABCDEFGHIJKLMNOPQRSTUVWXA",
-                           "ABCDEFGHIJKLMNOPQRSTUVWXA",
-                           "ABCDEFGHIJKLMNOPQRSTUVWXA",
-                           "ABCDEFGHIJKLMNOPQRSTUVWXA",
-                           "ABCDEFGHIJKLMNOPQRSTUVWXY",
-                           "ABCDEFGHIJKLMNOPQRSTUVWXA",
-                           "ABCDEFGHIJKLMNOPQRSTUVWXA",
-                           "ABCDEFGHIJKLMNOPQRSTUVWXA",
-                           "ABCDEFGHIJKLMNOPQRSTUVWXA",
-                           "ABCDEFGHIJKLMNOPQRSTUVWXA"};
+    const char *test[] = 
+    /*                      {"ABCDEFGHIJKLMNOPQRSTUVWXA",*/
+                           //"ABCDEFGHIJKLMNOPQRSTUVWXA",
+                           //"ABCDEFGHIJKLMNOPQRSTUVWXA",
+                           //"ABCDEFGHIJKLMNOPQRSTUVWXA",
+                           //"ABCDEFGHIJKLMNOPQRSTUVWXA",
+                           //"ABCDEFGHIJKLMNOPQRSTUVWXA",
+                           //"ABCDEFGHIJKLMNOPQRSTUVWXY",
+                           //"ABCDEFGHIJKLMNOPQRSTUVWXA",
+                           //"ABCDEFGHIJKLMNOPQRSTUVWXA",
+                           //"ABCDEFGHIJKLMNOPQRSTUVWXA",
+                           //"ABCDEFGHIJKLMNOPQRSTUVWXA",
+                           /*"ABCDEFGHIJKLMNOPQRSTUVWXA"};*/
+      { "ABE",
+        "CFG",
+        "BDH",
+        "ABC" }; 
 
     vector<string> v1(test, end(test));
     int len = a.length(v1);
