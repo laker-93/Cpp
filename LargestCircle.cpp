@@ -43,10 +43,10 @@ bool pass_through(node centre, int radius, node point)
     int norm_b = pow(x_b - a, 2) + pow(y_b - b, 2) - radius_sq;
     int norm_c = pow(x_c - a, 2) + pow(y_c - b, 2) - radius_sq;
     int norm_d = pow(x_d - a, 2) + pow(y_d - b, 2) - radius_sq;
-    if(norm_a > 0 && norm_b > 0 && norm_c > 0 && norm_d > 0) {
+    if(norm_a >= 0 && norm_b >= 0 && norm_c >= 0 && norm_d >= 0) {
         return false;
     }
-    if(norm_a < 0 && norm_b < 0 && norm_c < 0 && norm_d < 0) {
+    if(norm_a <= 0 && norm_b <= 0 && norm_c <= 0 && norm_d <= 0) {
         return false;
     }
     if(point.x + radius > min_dim || point.y + radius > min_dim) {
