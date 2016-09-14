@@ -1,4 +1,5 @@
 #include <iostream>
+#include <algorithm>
 #include <vector>
 #include <string>
 
@@ -40,6 +41,14 @@ void make_friends(Animal& d1, Animal& d2) {
 
 void Animal::add_friend(const Animal& new_friend) {
     friends.push_back(&new_friend);
+    /* remove friend:
+     * remove description:
+     * Transforms the range [first,last) into a range with all the elements 
+     * that compare equal to val removed, and returns an iterator to the new end
+     * of that range.
+     */
+    auto it = std::remove(friends.begin(), friends.end(), &new_friend);
+    friends.erase(it , friends.end());
 }
 
 
