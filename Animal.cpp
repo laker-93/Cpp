@@ -48,7 +48,7 @@ void Animal::add_friend(const Animal& new_friend) {
      * of that range.
      */
     auto it = std::remove(friends.begin(), friends.end(), &new_friend);
-    friends.erase(it , friends.end());
+    //friends.erase(it , friends.end());
 }
 
 
