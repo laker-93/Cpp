@@ -13,9 +13,10 @@
  */
 
 #include <iostream>
-#include <math.h>
-#include <vector>
-#include <limits>
+#include <math.h> // for sqrt
+#include <algorithm> // for binary search
+#include <vector> // to make vectors
+#include <limits> // for max int
 
 /*
  *  create a class to contain return of the program: if valid input then return
@@ -120,6 +121,7 @@ std::vector<int> modified_sieve(int input) {
     return primes;
 }
 
+
 /*
  * Iterate through list of primes until match is found. This takes O(n^2)
  * Iterate backwards through list of primes then form difference between prime
@@ -133,17 +135,20 @@ TwoPrimes find_goldbachs(std::vector<int> primes, int input) {
     int num_primes = primes.size();
     bool sum_found = false;
     while(!sum_found) {
-        for(int i = num_primes - 1; i > 0; --i) {
+        for(int i = num_primes - 1; i >= 0; --i) {
 
             p1 = primes[i];
             p2 = input - p1;
-            for(int j = 0; primes[j] <= p2; ++j) {
-                if(p2 == primes[j]) {sum_found = true;};
-            }
+            //binary search for p2 in primes
+            bool found_p2 = std::binary_search(primes.begin(), primes.end(), p2);
+    std::cout << "first prime at index " << i << " is " << p1 << " p2 = " << p2 << std::endl;
+                if(found_p2) {
+                    sum_found = true;
+                    break;
+                };
         }
     }
     TwoPrimes tp(p1, p2);
-    std::cout << "first prime " << p1 << " p2 = " << p2 << std::endl;
     return tp;
 }
 
@@ -162,10 +167,10 @@ TwoPrimes goldbach_conjecture(int input) {
 
 int user_input() {
     int input;
-    std::cout << "Enter a positive, even number" << std::endl;
+    std::cout << "Enter a positive, even number greater than 2." << std::endl;
     std::cin >> input;
-    while(std::cin.fail() || (input - 1) % 2 == 0 || input <= 0 ) {
-        std::cerr << "Enter a positive, even number." << std::endl;
+    while(std::cin.fail() || (input - 1) % 2 == 0 || input <= 2 ) {
+        std::cerr << "Enter a positive, even number greater than 2." << std::endl;
         std::cin.clear();
         std::cin.ignore();
         std::cin >> input;
@@ -179,10 +184,12 @@ int user_input() {
 
      std::vector<int> test(3);
      for(auto a : test) {std::cout << a;}
-     int max_int = std::numeric_limits<int>::max() + 1;
+     int max_int = std::numeric_limits<int>::max();
         std::cout << max_int << std::endl;
     int input =  user_input();
     std::vector<int> mod_s = modified_sieve(input);
+    // print primes:
+ //   for(int i : mod_s) { std::cout << i << std::endl; }
     TwoPrimes tp1 = find_goldbachs(mod_s, input);
 
     int p1=tp1.get_prime_1();
