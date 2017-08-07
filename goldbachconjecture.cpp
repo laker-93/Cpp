@@ -10,9 +10,18 @@
  * list of primes: an operation taking O(n) time. There are sublinear sieves
  * however, due to above limitation of O(n) iteration these would be superfluous
  *
+ * Potential difficulties/problems encountered:
+ *    - integer gets too big
+ *        - one solution is to use sieve for integers up to a certain amount.
+ *        For larger integers, a more sophisticated approach would have to be
+ *        used.
+ *    - handling user input
+ *    - using modified faster algorithm vs sieve of atkin
+ *
  */
 
-#include <iostream>
+#include <iostream> //for input and output
+#include <sstream>  //for handling input
 #include <math.h> // for sqrt
 #include <algorithm> // for binary search
 #include <vector> // to make vectors
@@ -129,11 +138,12 @@ std::vector<int> modified_sieve(int input) {
  * Number of primes less than n is O (n / log n) so searching takes 
  * O ( log (n / log n) ) = O ( log n - log log n ) = O ( log n )
  */
-TwoPrimes find_goldbachs(std::vector<int> primes, int input) {
+TwoPrimes find_goldbachs(std::vector<int> &primes, int input) {
 
-    int p1, p2 = 0;
+    int p1, p2 = 2;
     int num_primes = primes.size();
     bool sum_found = false;
+
     while(!sum_found) {
         for(int i = num_primes - 1; i >= 0; --i) {
 
@@ -162,22 +172,32 @@ TwoPrimes goldbach_conjecture(int input) {
 
  /*
   * need to check if input is valid (positive, even and less than some big
+  * Tried various ways of handling input. Using cin is problematic as requires 
+  * multiple lines to handle errors and clean incorrect input. Using getline
+  * provides cleaner code.
+  * Since 2 cannot be expressed as sum of two primes, require user to input an
+  * integer greater than 2.
   * number...)
   */
 
 int user_input() {
-    int input;
-    std::cout << "Enter a positive, even number greater than 2." << std::endl;
-    std::cin >> input;
-    while(std::cin.fail() || (input - 1) % 2 == 0 || input <= 2 ) {
-        std::cerr << "Enter a positive, even number greater than 2." << std::endl;
-        std::cin.clear();
-        std::cin.ignore();
-        std::cin >> input;
-    }
-    std::cout << "you entered " << input << std::endl;
+    int int_input = 0;
+    std::string str_input = "";
+    bool is_valid_int = false;
+    while(!is_valid_int) {
+        std::cout << "Enter a positive, even number greater than 2." << std::endl;
+        //copy user input into str_input
+        getline(std::cin, str_input);
+        //convert str_inpt into a string stream object
+        std::stringstream input_stream(str_input);
+        //test to see if input_stream is of integer type and even and greater than 2.
+        if(input_stream >> int_input && int_input > 2 && int_input % 2 ==0) {
+            is_valid_int = true; }
 
-    return input;
+    }
+    std::cout << "you entered " << int_input << std::endl;
+
+    return int_input;
 }
  int main() {
 
