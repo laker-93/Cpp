@@ -8,7 +8,7 @@ int string_play() {
 
 
     int counter = 0;
-    for(int i = counter; i <= t.size(); i++) {
+    for(size_t i = counter; i <= t.size(); i++) {
         if(i == t.size()) { 
             std::cout << "eof" << std::endl;
             break;
@@ -19,22 +19,55 @@ int string_play() {
 }
 
 
-bool match_cpp(std::string &pattern, std::string &file, size_t pattern_count, size_t file_count) {
-    for(size_t i = pattern_count; i < pattern.size(); i++) {
-        switch(pattern.at(i)) {
+bool match_cpp(std::string &pattern, std::string &file, size_t pattern_count,
+        size_t file_count) {
+    for(; pattern_count < pattern.size(); pattern_count++) {
+    std::cout << "start of for loop with file count = " << file_count 
+        << " and pattern_count =  " << pattern_count << 
+        " file.size() = " << file.size() <<
+        " pattern.size() = " << pattern.size() << std::endl;
+        switch(pattern.at(pattern_count)) {
+            case '*':
+                //if pattern terminates after * we are done since can then mat-
+                //ch with any file
+                if(pattern_count + 1 == pattern.size()) { return true; }
+                //if not then need to increment file through all its chars whi-
+                //lst comparing against next char in pattern
+                for (size_t i = 0; i < file.size(); ++i) {
+                    if (match_cpp(pattern, file, pattern_count + 1, 
+                                file_count + i)) {
+                        return true;
+                    }
+                }
+                //if go through all of file without matching to next character
+                //in pattern then we have failed to find a match
+                return false;
+                //note - no need to use break here since we return
             case '?':
                 //found a ? in pattern so must have some characters left in file
                 //to match with. If not, file does not match.
                 if(file_count == file.size()) { return false; }
-                std::cout << "? found at index " << i << std::endl;
+                ++file_count;
                 break;
-            case '*':
-                if(pattern_count + 1 == pattern.size()) { return true; }
-                std::cout << "* found at index" << i << std::endl;
-                break;
+            default:
+                //case where no wildcard is found in pattern, Therefore must
+                //require a like for like match with char in file. If
+                //file_count has exceeded file.size() then also return false
+                if(file_count >= file.size()) { return false; }
+                if(file.at(file_count) != pattern.at(pattern_count)) {
+                    return false;
+                }
+                ++file_count;
         }
+        //at this point, iterated through entirity of pattern and so file must
+        //be over too
     }
-    return true;
+
+    std::cout << "exited for loop with file count = " << file_count 
+        << " and pattern_count =  " << pattern_count << 
+        " file.size() = " << file.size() <<
+        " pattern.size() = " << pattern.size() << std::endl;
+    return (file_count == file.size()); 
 }
 
 
@@ -81,16 +114,17 @@ int main()
 {
 
     string_play();
-    char const *pat = "*.txt";
-    char const *fl = "file.txt";
+    char const *pat = "*?a***.txt";
+    char const *fl = "fileb?a*******.txt";
     bool matched = match(pat, fl);
 
-    std::string pattern = "*?a.txt";
-    std::string file = "fileb?a.txt";
+    std::string pattern = "*?a****b*.txt";
+    std::string file = "fileb?a*ajahaihuf*aofij***b.txt";
     size_t pattern_count = 0;
     size_t file_count = 0;
-    match_cpp(pattern, file, pattern_count, file_count);
-    std::cout << true << " found match? " << matched << std::endl;
+    bool matched_cpp = match_cpp(pattern, file, pattern_count, file_count);
+    std::cout << true << " c match? " << matched <<
+       " cpp match? " << matched_cpp << std::endl;
 
     return 0;
 }
