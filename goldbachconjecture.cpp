@@ -138,13 +138,13 @@ std::vector<int> modified_sieve(int input) {
  * Number of primes less than n is O (n / log n) so searching takes 
  * O ( log (n / log n) ) = O ( log n - log log n ) = O ( log n )
  */
-TwoPrimes find_goldbachs(std::vector<int> &primes, int input) {
+std::vector<TwoPrimes> find_goldbachs(std::vector<int> &primes, int input,
+                                      bool all_pairs) {
 
     int p1, p2 = 2;
     int num_primes = primes.size();
-    bool sum_found = false;
+    std::vector<TwoPrimes> result;
 
-    while(!sum_found) {
         for(int i = num_primes - 1; i >= 0; --i) {
 
             p1 = primes[i];
@@ -153,13 +153,14 @@ TwoPrimes find_goldbachs(std::vector<int> &primes, int input) {
             bool found_p2 = std::binary_search(primes.begin(), primes.end(), p2);
     std::cout << "first prime at index " << i << " is " << p1 << " p2 = " << p2 << std::endl;
                 if(found_p2) {
-                    sum_found = true;
-                    break;
+                    if(all_pairs == false) { break; }
+                    TwoPrimes tp(p1, p2);
+                    result.push_back(tp);
                 };
         }
-    }
     TwoPrimes tp(p1, p2);
-    return tp;
+    result.push_back(tp);
+    return result;
 }
 
 TwoPrimes goldbach_conjecture(int input) {
@@ -199,22 +200,42 @@ int user_input() {
 
     return int_input;
 }
- int main() {
+
+/*
+ * pass arguments into main to set user option of returning all goldbach pairs
+ */
 
 
-     std::vector<int> test(3);
-     for(auto a : test) {std::cout << a;}
-     int max_int = std::numeric_limits<int>::max();
-        std::cout << max_int << std::endl;
+ int main(int argc, char *argv[]) {
+
+
+     bool all_pairs = false;
+     if(argc > 2) { std::cerr << "Unknown arguments passed in. Pass flag: " <<
+         "'-all-pairs' if you want the program to list all pairs of primes."
+             << std::endl;
+     }
+
+     if(argc == 2) {
+         if(strcmp(*(argv + 1), "-all-pairs") == 0) { all_pairs = true; }
+         else { std::cerr << "Unknown arguments passed in. Pass flag: " <<
+         "'-all-pairs' if you want the program to list all pairs of primes."
+             << std::endl;
+         }
+     }
+         
+    int max_int = std::numeric_limits<int>::max();
+    std::cout << max_int << std::endl;
     int input =  user_input();
     std::vector<int> mod_s = modified_sieve(input);
     // print primes:
  //   for(int i : mod_s) { std::cout << i << std::endl; }
-    TwoPrimes tp1 = find_goldbachs(mod_s, input);
+    std::vector<TwoPrimes> tpv = find_goldbachs(mod_s, input, all_pairs);
 
-    int p1=tp1.get_prime_1();
-    int p2=tp1.get_prime_2();
+    for(auto tp : tpv) {
+    int p1=tp.get_prime_1();
+    int p2=tp.get_prime_2();
     std::cout << p1 << " " << p2 << std::endl;
+    }
 //    TwoPrimes tp = goldbach_conjecture(input);
 // 
 //        int p1=tp.get_prime_1();
