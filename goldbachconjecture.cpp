@@ -1,9 +1,9 @@
 /*
- * program to return two primes that sum to make the input of an even, positive
- * integer
+ * Program to return two primes that sum to make the input of an even, positive
+ * integer.
  * Thought process:
  * First find list of primes less than input and iterate through until correct
- * sum if found. Time complexity of this implmentation dominated by time compl-
+ * sum is found. Time complexity of this implmentation dominated by time compl-
  * exity of finding list of primes with Sieve of Eratosthenes O(n log log n).
  * Thus an improvement can be made by using a faster implementation of Sieve -
  * however, once primes are generated, algorithm needs to iterate through the
@@ -15,8 +15,6 @@
  *        - one solution is to use sieve for integers up to a certain amount.
  *        For larger integers, a more sophisticated approach would have to be
  *        used.
- *    - handling user input
- *    - using modified faster algorithm vs sieve of atkin
  *
  */
 
@@ -28,8 +26,7 @@
 #include <limits> // for max int
 
 /*
- *  create a class to contain return of the program: if valid input then return
- *  the two primes that sum to give the input, else return invalid input.
+ *  Create a class to contain return of the program: two primes.
  */ 
 class TwoPrimes {
     public:
@@ -50,64 +47,9 @@ class TwoPrimes {
 };
 
 /*
- * Logic to find list of primes less than or equal to user's input using the
- * Sieve of Eratosthenes. Run time of Sieve is O(n log log n) but only requires
- * O(n) space.
- */
-std::vector<bool> sieve(int n) {
-    std::vector<bool> numbers(n, true);
-    /*
-     * 1 is not a prime so always mark first number as false.
-     */
-    numbers.at(0) = false;
-    /*
-     * only need to search up to sqrt(n) since one factor of n is always guara-
-     * nteed to be less than or equal to sqrt(n)
-     */
-    for(int i = 1; i < sqrt(n); i++) {
-        /*
-         * continue searching until we hit the next true value.
-         */
-        if(numbers.at(i) == false) { continue; }
-
-        /*
-         * vectors start at position 0, list of primes starts at 1, therefore
-         * need to add + 1 to j.
-        */ 
-        for(int j = 2*i + 1; j < n; j += i+1) {
-            numbers.at(j) = false;
-        }
-    }
-    return numbers;
-}
-
-/*
- * If Goldbach's conjecture is true the following will always produce two valid
- * primes that sum to give input. Runs in O(n) time, O(1) space.
- */
-TwoPrimes find_primes(std::vector<bool> sieved, int input) {
-    int counter = 1;
-
-    int p1, p2 = 0;
-    for(bool b: sieved) {
-
-        if(b) {
-            std::cout << counter << std::endl;
-            p1 = counter;
-            p2 = input - counter;
-            if(sieved.at(p2 - 1)) {break;}
-        }
-        counter++;
-    }
-    TwoPrimes tp(p1, p2);
-    std::cout << "first prime " << p1 << " p2 = " << p2 << std::endl;
-    return tp;
-}
-
-/*
  * Modified Sieve of Eratosthenes that runs in O(n) time. Algorithm requires 
  * O(n) space too but this can be used to store the primes which are needed
- * later. Thus is a much more favourable algorithm.
+ * later.
  */
 std::vector<int> modified_sieve(int input) {
     std::vector<bool> isprime(input, true);
@@ -132,53 +74,46 @@ std::vector<int> modified_sieve(int input) {
 
 
 /*
- * Iterate through list of primes until match is found. This takes O(n^2)
  * Iterate backwards through list of primes then form difference between prime
  * and input. Then perform a binary search for this difference.
  * Number of primes less than n is O (n / log n) so searching takes 
  * O ( log (n / log n) ) = O ( log n - log log n ) = O ( log n )
+ * Iterating through primes and binary searching thus takes:
+ * O(n / log n * log n) = O(n)
  */
 std::vector<TwoPrimes> find_goldbachs(std::vector<int> &primes, int input,
                                       bool all_pairs) {
 
-    int p1, p2 = 2;
     int num_primes = primes.size();
     std::vector<TwoPrimes> result;
-
-        for(int i = num_primes - 1; i >= 0; --i) {
-
-            p1 = primes[i];
-            p2 = input - p1;
-            //binary search for p2 in primes
-            bool found_p2 = std::binary_search(primes.begin(), primes.end(), p2);
-    std::cout << "first prime at index " << i << " is " << p1 << " p2 = " << p2 << std::endl;
-                if(found_p2) {
-                    if(all_pairs == false) { break; }
+    
+    for(int i = num_primes - 1; i >= 0; --i) {
+ 
+        int p1 = primes[i];
+        int p2 = input - p1;
+        //binary search for p2 in primes
+        bool found_p2 = std::binary_search(primes.begin(), primes.end(), p2);
+            if(found_p2) {
+                if(all_pairs == false) {
                     TwoPrimes tp(p1, p2);
                     result.push_back(tp);
-                };
-        }
-    TwoPrimes tp(p1, p2);
-    result.push_back(tp);
+                    return result;
+                }
+                TwoPrimes tp(p1, p2);
+                result.push_back(tp);
+            };
+    }
     return result;
-}
-
-TwoPrimes goldbach_conjecture(int input) {
-       
-    std::vector<bool> sieved = sieve(input);
-    //now have list of primes, iterate through to see if sum makes input.
-    TwoPrimes tp = find_primes(sieved, input);
-    return tp;
 }
 
  /*
   * need to check if input is valid (positive, even and less than some big
+  * number...)
   * Tried various ways of handling input. Using cin is problematic as requires 
   * multiple lines to handle errors and clean incorrect input. Using getline
   * provides cleaner code.
   * Since 2 cannot be expressed as sum of two primes, require user to input an
   * integer greater than 2.
-  * number...)
   */
 
 int user_input() {
@@ -213,6 +148,7 @@ int user_input() {
      if(argc > 2) { std::cerr << "Unknown arguments passed in. Pass flag: " <<
          "'-all-pairs' if you want the program to list all pairs of primes."
              << std::endl;
+         return 0;
      }
 
      if(argc == 2) {
@@ -220,28 +156,76 @@ int user_input() {
          else { std::cerr << "Unknown arguments passed in. Pass flag: " <<
          "'-all-pairs' if you want the program to list all pairs of primes."
              << std::endl;
+         return 0;
          }
      }
          
-    int max_int = std::numeric_limits<int>::max();
-    std::cout << max_int << std::endl;
     int input =  user_input();
     std::vector<int> mod_s = modified_sieve(input);
-    // print primes:
- //   for(int i : mod_s) { std::cout << i << std::endl; }
     std::vector<TwoPrimes> tpv = find_goldbachs(mod_s, input, all_pairs);
 
+    std::cout << "found " << tpv.size() << " pairs:" << std::endl;
     for(auto tp : tpv) {
     int p1=tp.get_prime_1();
     int p2=tp.get_prime_2();
     std::cout << p1 << " " << p2 << std::endl;
     }
-//    TwoPrimes tp = goldbach_conjecture(input);
-// 
-//        int p1=tp.get_prime_1();
-//        int p2=tp.get_prime_2();
-//        std::cout << p1 << " " << p2 << std::endl;
-//
     return 0;
 }
- 
+///*
+// * Logic to find list of primes less than or equal to user's input using the
+// * Sieve of Eratosthenes. Run time of Sieve is O(n log log n) but only requires
+// * O(n) space.
+// */
+//
+//std::vector<bool> sieve(int n) {
+//    std::vector<bool> numbers(n, true);
+//    /*
+//     * 1 is not a prime so always mark first number as false.
+//     */
+//    numbers.at(0) = false;
+//    /*
+//     * only need to search up to sqrt(n) since one factor of n is always guara-
+//     * nteed to be less than or equal to sqrt(n)
+//     */
+//    for(int i = 1; i < sqrt(n); i++) {
+//        /*
+//         * continue searching until we hit the next true value.
+//         */
+//        if(numbers.at(i) == false) { continue; }
+//
+//        /*
+//         * vectors start at position 0, list of primes starts at 1, therefore
+//         * need to add + 1 to j.
+//        */ 
+//        for(int j = 2*i + 1; j < n; j += i+1) {
+//            numbers.at(j) = false;
+//        }
+//    }
+//    return numbers;
+//}
+///
+///*
+// * If Goldbach's conjecture is true the following will always produce two valid
+// * primes that sum to give input. Runs in O(n) time, O(1) space.
+// */
+//TwoPrimes find_primes(std::vector<bool> sieved, int input) {
+//    int counter = 1;
+//
+//    int p1, p2 = 0;
+//    for(bool b: sieved) {
+//
+//        if(b) {
+//            std::cout << counter << std::endl;
+//            p1 = counter;
+//            p2 = input - counter;
+//            if(sieved.at(p2 - 1)) {break;}
+//        }
+//        counter++;
+//    }
+//    TwoPrimes tp(p1, p2);
+//    std::cout << "first prime " << p1 << " p2 = " << p2 << std::endl;
+//    return tp;
+//}
+//
+
